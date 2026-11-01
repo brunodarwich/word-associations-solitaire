@@ -48,11 +48,7 @@ export function Foundations({
             ) : (
               <>
                 <Plus size={24} />
-                <span>
-                  Coloque uma
-                  <br />
-                  categoria aqui
-                </span>
+                <span>Coloque uma categoria aqui</span>
               </>
             )}
           </button>

@@ -600,9 +600,6 @@ button.playing-card:active {
   .foundation strong {
     font-size: 11px;
   }
-  .foundation br {
-    display: none;
-  }
   .stock-area {
     grid-column: 1;
     grid-row: 2;
