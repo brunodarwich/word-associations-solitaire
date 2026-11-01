@@ -9,7 +9,7 @@
 - [x] 4. Arraste por ponteiro. Aceite: pilha acompanha dedo, destinos destacados, cancelamento sem custo e rolagem nas bordas. Verificação: eventos reais de toque, mouse e cancelamento. Dependências: 3.
 - [x] 5. Mesa compacta. Aceite: controles essenciais visíveis em 320×640, tablet e paisagem, somente colunas rolam quando necessário. Verificação: dimensões, títulos longos, zoom e screenshots. Dependências: 3.
 - [x] Checkpoint: toque, teclado, acessibilidade e tamanhos aprovados.
-- [ ] 6. Publicar. Aceite: testes, build, pipeline e smoke público aprovados. Verificação: Vitest, Playwright, GitHub Actions e URL pública. Dependências: 4, 5.
+- [x] 6. Publicar. Aceite: testes, build, pipeline e smoke público aprovados. Verificação: Vitest, Playwright, GitHub Actions e URL pública. Dependências: 4, 5.
 
 Cada item tem escopo S/M (até aproximadamente cinco arquivos). Comandos de verificação: npm test, npm run build e npm run test:e2e.
 
@@ -34,3 +34,11 @@ Cada item tem escopo S/M (até aproximadamente cinco arquivos). Comandos de veri
 - Campanha completa executada pelos controles no CI; auditorias de início, campanha e mesa sem violações WCAG A/AA nos cenários verificados.
 - Site publicado: https://brunodarwich.github.io/word-associations-solitaire/
 - Três testes adicionais no site publicado aprovados: vitória/desbloqueio/recarga, teclado/dicas/desfazer/configurações e arraste.
+
+## Evidências da melhoria de pilhas
+
+- 18 testes de regras e persistência aprovados; soluções das 30 fases preservadas.
+- Pipeline aprovado com testes de navegador, acessibilidade, build e publicação: https://github.com/brunodarwich/word-associations-solitaire/actions/runs/41359463277
+- Toque real arrastou três cartas juntas no site público, sem clique duplicado e consumindo uma jogada.
+- Versão pública conferida em 320×640, 768×1024 e 1366×1024, sem erros de JavaScript ou rolagem horizontal, com categorias, monte e ações visíveis.
+- Verificação local adicional de zoom de 200%: controles alcançáveis e dica funcional.
