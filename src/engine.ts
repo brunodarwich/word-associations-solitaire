@@ -28,11 +28,16 @@ export function legal(l: Level, b: Board, a: PlayAction): boolean {
   if (a.type === "draw") return b.stock.length > 0;
   if (a.type === "recycle") return !b.stock.length && b.waste.length > 0;
   const card = l.cards.find((c) => c.id === a.card);
-  if (!card || !playable(b).includes(a.card) || !Number.isInteger(a.to.index))
-    return false;
+  const ids =
+    a.type === "moveStack"
+      ? stackFrom(l, b, a.card)
+      : playable(b).includes(a.card)
+        ? [a.card]
+        : [];
+  if (!card || !ids.length || !Number.isInteger(a.to.index)) return false;
   if (a.to.type === "column") {
     const pile = b.columns[a.to.index];
-    if (!pile || pile.at(-1) === a.card) return false;
+    if (!pile || pile.includes(a.card)) return false;
     return (
       !pile.length ||
       l.cards.find((c) => c.id === pile.at(-1))!.group === card.group
@@ -40,27 +45,57 @@ export function legal(l: Level, b: Board, a: PlayAction): boolean {
   }
   const pile = b.foundations[a.to.index];
   if (!pile) return false;
+  const cards = ids.map((id) => l.cards.find((c) => c.id === id)!);
   return !pile.length
-    ? card.kind === "title"
-    : card.kind === "word" &&
+    ? cards.some((c) => c.kind === "title") && cards.length <= 5
+    : cards.every((c) => c.kind === "word") &&
+        pile.length + cards.length <= 5 &&
         l.cards.find((c) => c.id === pile[0])!.group === card.group;
+}
+// A selectable run is a complete exposed suffix, never a subset of its tail.
+export function stackFrom(l: Level, b: Board, id: string): string[] {
+  if (b.waste.at(-1) === id && b.revealed.includes(id)) return [id];
+  const source = b.columns.find((p) => p.includes(id));
+  if (!source) return [];
+  const ids = source.slice(source.indexOf(id));
+  const first = l.cards.find((c) => c.id === id);
+  return first &&
+    ids.every(
+      (x) =>
+        b.revealed.includes(x) &&
+        l.cards.find((c) => c.id === x)?.group === first.group,
+    )
+    ? ids
+    : [];
 }
 export function hint(l: Level, g: Game): PlayAction | undefined {
   if (status(l, g) !== "playing") return;
   const b = g.board,
-    available = playable(b);
+    available = [...b.columns.flat(), ...b.waste.slice(-1)].filter(
+      (id) => stackFrom(l, b, id).length,
+    );
   const foundations: PlayAction[] = available
     .flatMap((card) =>
       b.foundations.map((_, index) => ({
-        type: "move" as const,
+        type:
+          stackFrom(l, b, card).length > 1
+            ? ("moveStack" as const)
+            : ("move" as const),
         card,
         to: { type: "foundation" as const, index },
       })),
     )
     .filter((a) => legal(l, b, a));
   foundations.sort((a, c) => {
-    if (a.type !== "move" || c.type !== "move") return 0;
-    return b.foundations[c.to.index].length - b.foundations[a.to.index].length;
+    if (
+      (a.type !== "move" && a.type !== "moveStack") ||
+      (c.type !== "move" && c.type !== "moveStack")
+    )
+      return 0;
+    return (
+      stackFrom(l, b, c.card).length - stackFrom(l, b, a.card).length ||
+      b.foundations[c.to.index].length - b.foundations[a.to.index].length
+    );
   });
   if (foundations.length) return foundations[0];
   // Prefer a move from the known solution when it is currently legal.
@@ -68,11 +103,12 @@ export function hint(l: Level, g: Game): PlayAction | undefined {
   if (witness) return witness;
   // Free a hidden card, then free the waste. Avoid suggesting an empty-to-empty shuffle.
   for (const card of available) {
-    const source = b.columns.findIndex((p) => p.at(-1) === card);
-    if (source >= 0 && b.columns[source].length < 2) continue;
+    const source = b.columns.findIndex((p) => p.includes(card));
+    const ids = stackFrom(l, b, card);
+    if (source >= 0 && b.columns[source].length === ids.length) continue;
     for (let index = 0; index < b.columns.length; index++) {
       const a: PlayAction = {
-        type: "move",
+        type: ids.length > 1 ? "moveStack" : "move",
         card,
         to: { type: "column", index },
       };
@@ -108,9 +144,10 @@ export function act(l: Level, g: Game, a: Action): Game {
     b.stock = b.waste.slice().reverse();
     b.waste = [];
   } else {
-    const source = b.columns.find((c) => c.at(-1) === a.card);
+    const ids = a.type === "moveStack" ? stackFrom(l, b, a.card) : [a.card];
+    const source = b.columns.find((c) => c.includes(a.card));
     if (source) {
-      source.pop();
+      source.splice(source.length - ids.length);
       const top = source.at(-1);
       if (top && !b.revealed.includes(top)) b.revealed.push(top);
     } else b.waste.pop();
@@ -118,7 +155,13 @@ export function act(l: Level, g: Game, a: Action): Game {
       a.to.type === "column"
         ? b.columns[a.to.index]
         : b.foundations[a.to.index];
-    dest.push(a.card);
+    if (a.to.type === "foundation" && !dest.length)
+      ids.sort(
+        (x, y) =>
+          Number(l.cards.find((c) => c.id === y)!.kind === "title") -
+          Number(l.cards.find((c) => c.id === x)!.kind === "title"),
+      );
+    dest.push(...ids);
     if (a.to.type === "foundation" && dest.length === 5) {
       b.completed.push(l.cards.find((c) => c.id === a.card)!.group);
       b.foundations[a.to.index] = [];

@@ -7,6 +7,7 @@ export type Card = {
 export type Destination = { type: "column" | "foundation"; index: number };
 export type PlayAction =
   | { type: "move"; card: string; to: Destination }
+  | { type: "moveStack"; card: string; to: Destination }
   | { type: "draw" }
   | { type: "recycle" };
 export type Action = PlayAction | { type: "hint" } | { type: "undo" };
