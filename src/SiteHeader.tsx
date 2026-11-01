@@ -29,6 +29,7 @@ export function SiteHeader({
       <nav aria-label="Navegação principal">
         <button
           aria-label="As fases"
+          aria-current={screen === "levels" ? "page" : undefined}
           className={screen === "levels" ? "active" : ""}
           onClick={onLevels}
         >

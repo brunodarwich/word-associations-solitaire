@@ -108,7 +108,10 @@ export function Board({
           <div className="eyebrow">ENCONTRE AS CONEXÕES</div>
           <h1>{level.title}</h1>
         </div>
-        <div className={`move-counter ${b.moves < 8 ? "low" : ""}`}>
+        <div
+          className={`move-counter ${b.moves < 8 ? "low" : ""}`}
+          aria-label={`${b.moves} jogadas restantes${b.moves < 8 ? ", atenção ao limite" : ""}`}
+        >
           <strong>{b.moves}</strong>
           <span>
             jogadas
@@ -117,9 +120,33 @@ export function Board({
           </span>
         </div>
       </div>
-      {tutorial && <p className="mobile-tutorial">{tutorial}</p>}
+      {tutorial && (
+        <details className="mobile-tutorial">
+          <summary>Como jogar esta fase</summary>
+          <p>{tutorial}</p>
+        </details>
+      )}
       <div className="game-layout">
         <section className="table" aria-label="Mesa de jogo">
+          <div className={`selection-guide ${selected ? "has-selection" : ""}`}>
+            <p className="game-message" role="status" aria-live="polite">
+              {message ||
+                (selected
+                  ? "Escolha o destino da carta selecionada."
+                  : "Toque em uma carta e depois no destino.")}
+            </p>
+            {selected && (
+              <button
+                className="text-button"
+                onClick={() => {
+                  setSelected(null);
+                  setMessage("");
+                }}
+              >
+                Cancelar seleção
+              </button>
+            )}
+          </div>
           <div className="table-meta">
             <span>
               <Crown size={15} /> CATEGORIAS
@@ -128,6 +155,12 @@ export function Board({
               {b.completed.length} de {level.groups.length} concluídas
             </span>
           </div>
+          <progress
+            className="collection-progress"
+            value={b.completed.length}
+            max={level.groups.length}
+            aria-label="Categorias concluídas"
+          />
           <Foundations
             b={b}
             card={card}
@@ -234,12 +267,6 @@ export function Board({
         </section>
         <BoardAside b={b} level={level} tutorial={tutorial} />
       </div>
-      <p className="game-message" role="status" aria-live="polite">
-        {message ||
-          (selected
-            ? "Escolha o destino da carta selecionada."
-            : "Dica: cartas com coroa abrem novas categorias.")}
-      </p>
     </main>
   );
 }

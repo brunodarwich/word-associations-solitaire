@@ -44,6 +44,9 @@ export default function App() {
     setModal(null);
     setResultDismissed(false);
     window.scrollTo({ top: 0 });
+    requestAnimationFrame(() =>
+      document.getElementById("content")?.focus({ preventScroll: true }),
+    );
   }
   function start(id?: number) {
     setAttempt((n) => n + 1);
@@ -79,7 +82,7 @@ export default function App() {
         onHelp={() => setModal("help")}
         onSettings={() => setModal("settings")}
       />
-      <div id="content" tabIndex={-1}>
+      <div id="content" key={screen} className="screen-enter" tabIndex={-1}>
         {warning && (
           <div className="warning" role="status">
             {warning}

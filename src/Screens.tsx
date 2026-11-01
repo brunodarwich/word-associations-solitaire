@@ -77,34 +77,36 @@ export function Home({
         className="preview"
         aria-label="Associe palavras como violão e harpa à categoria Instrumentos de corda"
       >
-        <div className="preview-orbit" />
-        <span className="floating-note">
-          <Sparkles size={16} /> Tudo se conecta.
-        </span>
-        <div className="preview-card back-card">
-          <span>✧</span>
+        <div className="preview-stage">
+          <div className="preview-orbit" />
+          <span className="floating-note">
+            <Sparkles size={16} /> Tudo se conecta.
+          </span>
+          <div className="preview-card back-card">
+            <span>✧</span>
+          </div>
+          <div className="preview-card category-preview">
+            <span className="card-eyebrow">CATEGORIA</span>
+            <span className="preview-symbol">♧</span>
+            <strong>
+              Instrumentos
+              <br />
+              de corda
+            </strong>
+            <span className="preview-counter">2 de 4 palavras</span>
+          </div>
+          <div className="preview-card word-preview first-word">
+            <span className="card-corner">✧</span>
+            <strong>violão</strong>
+            <span className="card-corner end">✧</span>
+          </div>
+          <div className="preview-card word-preview second-word">
+            <span className="card-corner">✧</span>
+            <strong>harpa</strong>
+            <span className="card-corner end">✧</span>
+          </div>
+          <span className="preview-caption">ASSOCIE. ORGANIZE. DESCUBRA.</span>
         </div>
-        <div className="preview-card category-preview">
-          <span className="card-eyebrow">CATEGORIA</span>
-          <span className="preview-symbol">♧</span>
-          <strong>
-            Instrumentos
-            <br />
-            de corda
-          </strong>
-          <span className="preview-counter">2 de 4 palavras</span>
-        </div>
-        <div className="preview-card word-preview first-word">
-          <span className="card-corner">✧</span>
-          <strong>violão</strong>
-          <span className="card-corner end">✧</span>
-        </div>
-        <div className="preview-card word-preview second-word">
-          <span className="card-corner">✧</span>
-          <strong>harpa</strong>
-          <span className="card-corner end">✧</span>
-        </div>
-        <span className="preview-caption">ASSOCIE. ORGANIZE. DESCUBRA.</span>
       </section>
       <section className="home-bottom">
         <div>
@@ -159,6 +161,12 @@ export function Campaign({
           {Object.values(save.stars).reduce((a, b) => a + b, 0)} / 90 estrelas
         </span>
       </div>
+      <progress
+        className="journey-progress"
+        value={Object.keys(save.stars).length}
+        max={30}
+        aria-label="Progresso nas 30 fases"
+      />
       {chapters.map((name, chapter) => (
         <section key={name} className="chapter">
           <h2>
@@ -171,11 +179,15 @@ export function Campaign({
                 key={l.id}
                 className={`level-tile ${l.id === save.unlocked ? "current" : ""}`}
                 disabled={l.id > save.unlocked}
+                aria-current={l.id === save.unlocked ? "step" : undefined}
                 onClick={() => onStart(l.id)}
               >
                 <span className="level-number">
                   {l.id > save.unlocked ? (
-                    <Lock size={18} />
+                    <>
+                      <Lock size={14} />
+                      <span>{String(l.id).padStart(2, "0")}</span>
+                    </>
                   ) : (
                     String(l.id).padStart(2, "0")
                   )}
