@@ -40,9 +40,10 @@ export function MenuDialogs({
               grupo, ele sai da mesa e libera o espaço.
             </li>
             <li>
-              <strong>Descubra as cartas.</strong> Só a última carta exposta de
-              cada coluna pode se mover. Empilhe cartas da mesma categoria;
-              colunas vazias aceitam qualquer carta.
+              <strong>Descubra as cartas.</strong> Selecione uma carta ou uma
+              sequência exposta da mesma categoria para mover toda a pilha.
+              Empilhe cartas da mesma categoria; colunas vazias aceitam qualquer
+              carta.
             </li>
             <li>
               <strong>Use o monte.</strong> Compre uma carta por vez. Só o topo
@@ -51,7 +52,8 @@ export function MenuDialogs({
             </li>
             <li>
               <strong>Cuide das jogadas.</strong> Mover, comprar e reciclar
-              custam uma jogada. Tentativas inválidas são gratuitas.
+              custam uma jogada. Uma pilha inteira também custa só uma jogada e
+              pode ser desfeita de uma vez. Tentativas inválidas são gratuitas.
             </li>
           </ol>
           <p className="muted">

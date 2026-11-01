@@ -27,8 +27,17 @@ for (const width of [320, 768, 1024, 1440]) {
     await expect(page.locator("[aria-pressed=true]")).toHaveCount(0);
     await expect(page.getByRole("status")).toContainText("Toque em uma carta");
     if (width <= 1050) {
-      await page.getByText("Como jogar esta fase", { exact: true }).click();
-      await expect(page.locator(".mobile-tutorial p")).toBeVisible();
+      const tutorial = page.getByText("Como jogar esta fase", { exact: true });
+      if (await tutorial.isVisible()) {
+        await tutorial.click();
+        await expect(page.locator(".mobile-tutorial p")).toBeVisible();
+      } else {
+        await page
+          .getByRole("button", { name: "Como jogar", exact: true })
+          .click();
+        await expect(page.getByRole("dialog")).toBeVisible();
+        await page.keyboard.press("Escape");
+      }
     }
     await page.getByRole("button", { name: "Todas as fases" }).click();
     await fits();

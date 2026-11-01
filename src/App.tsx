@@ -71,7 +71,7 @@ export default function App() {
   }
   const result = game ? status(level, game) : "playing";
   return (
-    <>
+    <div className={`app-shell screen-${screen}`}>
       <a className="skip-link" href="#content">
         Pular para o conteúdo
       </a>
@@ -104,6 +104,7 @@ export default function App() {
             key={`${game.levelId}-${attempt}`}
             level={level}
             game={game}
+            interactionEnabled={!modal}
             dispatch={dispatch}
             onBack={() => navigate("levels")}
             onRestart={() => setModal("restart")}
@@ -143,6 +144,6 @@ export default function App() {
             onUndo={() => dispatch({ type: "undo" })}
           />
         )}
-    </>
+    </div>
   );
 }

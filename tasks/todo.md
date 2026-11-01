@@ -1,5 +1,16 @@
 # Tarefas
 
+## Mesa compacta e pilhas — implementação aprovada
+
+- [x] 1. Registrar decisões e dependências. Aceite: plano e critérios preservados. Verificação: revisão dos documentos. Dependências: nenhuma.
+- [x] 2. Motor de pilhas. Aceite: movimento atômico, custo único e desfazer; rejeitar sequências inválidas. Verificação: testes de regras, integridade e persistência. Dependências: 1.
+- [x] 3. Seleção de pilhas. Aceite: toque/teclado selecionam toda a sequência e destinos usam a validação do motor. Verificação: testes da interface. Dependências: 2.
+- [x] Checkpoint: regras e seleção verificadas, build aprovado.
+- [x] 4. Arraste por ponteiro. Aceite: pilha acompanha dedo, destinos destacados, cancelamento sem custo e rolagem nas bordas. Verificação: eventos reais de toque, mouse e cancelamento. Dependências: 3.
+- [x] 5. Mesa compacta. Aceite: controles essenciais visíveis em 320×640, tablet e paisagem, somente colunas rolam quando necessário. Verificação: dimensões, títulos longos, zoom e screenshots. Dependências: 3.
+- [x] Checkpoint: toque, teclado, acessibilidade e tamanhos aprovados.
+- [ ] 6. Publicar. Aceite: testes, build, pipeline e smoke público aprovados. Verificação: Vitest, Playwright, GitHub Actions e URL pública. Dependências: 4, 5.
+
 Cada item tem escopo S/M (até aproximadamente cinco arquivos). Comandos de verificação: npm test, npm run build e npm run test:e2e.
 
 - [x] 1. Base navegável. Aceite: título e layout responsivo; verificar build e navegador. Dependências: nenhuma.

@@ -108,29 +108,32 @@ export function Home({
           <span className="preview-caption">ASSOCIE. ORGANIZE. DESCUBRA.</span>
         </div>
       </section>
-      <section className="home-bottom">
-        <div>
-          <BookOpen size={22} />
-          <span>
-            <strong>Palavras que desafiam</strong>
-            <small>Da primeira conexão às grandes ideias.</small>
-          </span>
-        </div>
-        <div>
-          <Clock3 size={22} />
-          <span>
-            <strong>Sem pressa, com estratégia</strong>
-            <small>Cada jogada abre uma possibilidade.</small>
-          </span>
-        </div>
-        <div>
-          <Leaf size={22} />
-          <span>
-            <strong>Seu momento de pausa</strong>
-            <small>Gratuito, sem anúncios ou cadastro.</small>
-          </span>
-        </div>
-      </section>
+      <details className="about-game">
+        <summary>Sobre o jogo</summary>
+        <section className="home-bottom">
+          <div>
+            <BookOpen size={22} />
+            <span>
+              <strong>Palavras que desafiam</strong>
+              <small>Da primeira conexão às grandes ideias.</small>
+            </span>
+          </div>
+          <div>
+            <Clock3 size={22} />
+            <span>
+              <strong>Sem pressa, com estratégia</strong>
+              <small>Cada jogada abre uma possibilidade.</small>
+            </span>
+          </div>
+          <div>
+            <Leaf size={22} />
+            <span>
+              <strong>Seu momento de pausa</strong>
+              <small>Gratuito, sem anúncios ou cadastro.</small>
+            </span>
+          </div>
+        </section>
+      </details>
     </main>
   );
 }

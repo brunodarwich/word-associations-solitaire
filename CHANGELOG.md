@@ -1,5 +1,12 @@
 # Histórico
 
+## Mesa compacta e pilhas — 2026-11-01
+
+- Pilhas expostas da mesma categoria podem ser selecionadas e movidas por uma jogada; desfazer restaura todo o grupo.
+- Arraste por dedo, mouse e caneta com prévia da pilha, destinos destacados e rolagem nas bordas.
+- Abertura e mesa compactas em celular, tablet e paisagem, com rolagem interna das colunas e controles sem sobreposição.
+- Compatibilidade preservada com partidas e preferências existentes; dicas reconhecem pilhas.
+
 ## Atualização de interface — 2026-11-01
 
 - Melhor legibilidade, hierarquia e navegação por toque em celular e tablet.

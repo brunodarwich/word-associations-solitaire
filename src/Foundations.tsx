@@ -6,32 +6,32 @@ export function Foundations({
   suggestion,
   playing,
   move,
-  drop,
+  destinationClass,
 }: {
   b: Board;
   card: (id: string) => Card;
   suggestion?: PlayAction;
   playing: boolean;
   move: (to: Destination) => void;
-  drop: (e: React.DragEvent, to: Destination) => void;
+  destinationClass: (to: Destination) => string;
 }) {
   return (
     <div className="foundations">
       {b.foundations.map((pile, index) => {
         const title = pile.length ? card(pile[0]) : null;
         const highlighted =
-          suggestion?.type === "move" &&
+          (suggestion?.type === "move" || suggestion?.type === "moveStack") &&
           suggestion.to.type === "foundation" &&
           suggestion.to.index === index;
         return (
           <button
             key={index}
             data-foundation={index}
-            className={`foundation ${title ? "occupied" : ""} ${highlighted ? "hinted" : ""}`}
+            className={`foundation ${title ? "occupied" : ""} ${highlighted ? "hinted" : ""} ${destinationClass({ type: "foundation", index })}`}
+            data-drop-type="foundation"
+            data-drop-index={index}
             disabled={!playing}
             onClick={() => move({ type: "foundation", index })}
-            onDragOver={(e) => e.preventDefault()}
-            onDrop={(e) => drop(e, { type: "foundation", index })}
             aria-label={`Espaço de categoria ${index + 1}${title ? `: ${title.text}, ${pile.length - 1} de 4 palavras` : ": vazio"}`}
           >
             {title ? (

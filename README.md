@@ -24,9 +24,9 @@ npm run test:e2e
 
 ## Como jogar
 
-Abra uma categoria levando sua carta de coroa a um dos três espaços de coleta. Reúna suas quatro palavras para completar o grupo. Entre colunas, somente cartas da mesma categoria podem se sobrepor; colunas vazias aceitam qualquer carta. Só a última carta exposta de cada coluna e o topo do descarte podem se mover. Comprar, reciclar e mover custam uma jogada. Revelar cartas e tentativas inválidas não custam.
+Abra uma categoria levando sua carta de coroa a um dos três espaços de coleta. Reúna suas quatro palavras para completar o grupo. Entre colunas, somente cartas da mesma categoria podem se sobrepor; colunas vazias aceitam qualquer carta. Selecione uma carta exposta e toda a sequência abaixo dela, quando todas forem da mesma categoria, para mover a pilha inteira. Do descarte, somente o topo pode se mover. Comprar, reciclar e mover uma carta ou pilha custam uma jogada. Desfazer restaura a operação inteira. Revelar cartas e tentativas inválidas não custam.
 
-Cada tentativa tem três dicas e três desfazeres. Reiniciar restaura a distribuição original. Conclua todos os grupos dentro do limite; a vitória tem prioridade na última jogada. Toque ou clique na carta e no destino, use Tab + Enter, ou arraste.
+Cada tentativa tem três dicas e três desfazeres. Reiniciar restaura a distribuição original. Conclua todos os grupos dentro do limite; a vitória tem prioridade na última jogada. Toque ou clique na carta e no destino, use Tab + Enter, ou arraste com dedo, mouse ou caneta. O arraste destaca destinos válidos; soltar fora deles ou cancelar não custa jogadas. No celular e tablet, as colunas podem rolar enquanto categorias, monte e ações permanecem visíveis.
 
 Uma estrela pela vitória, outra por não usar dicas e outra por não desfazer. O melhor resultado é preservado. O progresso fica apenas no navegador, sem contas ou dados enviados a um servidor.
 

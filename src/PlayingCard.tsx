@@ -1,5 +1,6 @@
 import { Crown } from "lucide-react";
 import type { Card } from "./types";
+import type { HTMLAttributes } from "react";
 export function PlayingCard({
   card,
   revealed,
@@ -8,7 +9,7 @@ export function PlayingCard({
   hinted,
   playing,
   onSelect,
-  onDragSelect,
+  pointerHandlers,
 }: {
   card: Card;
   revealed: boolean;
@@ -17,7 +18,7 @@ export function PlayingCard({
   hinted: boolean;
   playing: boolean;
   onSelect: () => void;
-  onDragSelect: () => void;
+  pointerHandlers: HTMLAttributes<HTMLElement>;
 }) {
   const id = card.id;
   if (!revealed)
@@ -40,12 +41,7 @@ export function PlayingCard({
       disabled={!playing}
       aria-pressed={selected}
       aria-label={`${card.kind === "title" ? "Categoria: " : ""}${card.text}`}
-      draggable={playing}
-      onDragStart={(e) => {
-        e.dataTransfer.setData("text/plain", id);
-        e.dataTransfer.effectAllowed = "move";
-        onDragSelect();
-      }}
+      {...pointerHandlers}
       onClick={() => onSelect()}
     >
       <span className="card-kind" aria-hidden="true">

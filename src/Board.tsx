@@ -2,84 +2,59 @@ import { PlayingCard } from "./PlayingCard";
 import { Foundations } from "./Foundations";
 import { Columns } from "./Columns";
 import { BoardAside } from "./BoardAside";
-import { useState } from "react";
-import {
-  ArrowLeft,
-  RotateCcw,
-  Undo2,
-  Lightbulb,
-  Crown,
-  ArrowDown,
-  MousePointer2,
-} from "lucide-react";
-import { hint, status } from "./engine";
-import type { Action, Destination, Game, Level, PlayAction } from "./types";
+import { useBoardInteraction } from "./useBoardInteraction";
+import { DragPreview } from "./DragPreview";
+import { Crown, MousePointer2 } from "lucide-react";
+import { StockArea, BoardToolbar } from "./BoardControls";
+import { GameHeading } from "./GameHeading";
+import { status, stackFrom } from "./engine";
+import type { Action, Game, Level } from "./types";
 export function Board({
   level,
   game,
   dispatch,
   onBack,
   onRestart,
+  interactionEnabled,
 }: {
   level: Level;
   game: Game;
   dispatch: (a: Action) => boolean;
   onBack: () => void;
   onRestart: () => void;
+  interactionEnabled: boolean;
 }) {
-  const [selected, setSelected] = useState<string | null>(null),
-    [suggestion, setSuggestion] = useState<PlayAction | undefined>(),
-    [message, setMessage] = useState("");
-  const b = game.board,
-    playing = status(level, game) === "playing";
-  const card = (id: string) => level.cards.find((c) => c.id === id)!;
-  function send(a: Action) {
-    const ok = dispatch(a);
-    if (ok) {
-      setSelected(null);
-      setSuggestion(undefined);
-      setMessage("");
-    } else
-      setMessage(
-        "Essa carta não pode ir para esse lugar. Tente outra conexão.",
-      );
-    return ok;
-  }
-  function move(to: Destination, id = selected) {
-    if (id) send({ type: "move", card: id, to });
-    else setMessage("Selecione uma carta disponível primeiro.");
-  }
-  function select(id: string, column?: number) {
-    if (selected === id) {
-      setSelected(null);
-      return;
-    }
-    if (selected && column !== undefined) {
-      move({ type: "column", index: column });
-      return;
-    }
-    setSelected(id);
-    setMessage(
-      `${card(id).text} selecionada. Escolha uma categoria ou coluna.`,
-    );
-  }
-  function drop(e: React.DragEvent, to: Destination) {
-    e.preventDefault();
-    const id = e.dataTransfer.getData("text/plain");
-    if (id) move(to, id);
-  }
-  const hintCard = suggestion?.type === "move" ? suggestion.card : undefined;
-  const renderCard = (id: string, available: boolean, column?: number) => (
+  const {
+    b,
+    playing,
+    card,
+    selection,
+    selected,
+    suggestion,
+    message,
+    send,
+    move,
+    select,
+    drag,
+    destinationClass,
+    showHint,
+    cancelSelection,
+  } = useBoardInteraction({ level, game, dispatch, interactionEnabled });
+  const hintCard =
+    suggestion?.type === "move" || suggestion?.type === "moveStack"
+      ? suggestion.card
+      : undefined;
+  const renderCard = (id: string, column?: number) => (
     <PlayingCard
       key={id}
       card={card(id)}
       revealed={b.revealed.includes(id)}
-      available={available}
-      selected={selected === id}
+      available={stackFrom(level, b, id).length > 0}
+      selected={selection.includes(id)}
       hinted={hintCard === id}
       playing={playing}
       onSelect={() => select(id, column)}
-      onDragSelect={() => setSelected(id)}
+      pointerHandlers={drag.bind(id)}
     />
   );
   const tutorial =
@@ -94,40 +69,25 @@ export function Board({
             : undefined;
   return (
     <main className="game-page">
-      <div className="game-topline">
-        <button className="text-button" onClick={onBack}>
-          <ArrowLeft size={16} /> Todas as fases
-        </button>
-        <span className="game-chapter">
-          CAPÍTULO {Math.ceil(level.id / 5)} · FASE{" "}
-          {String(level.id).padStart(2, "0")}
-        </span>
-      </div>
-      <div className="game-heading">
-        <div>
-          <div className="eyebrow">ENCONTRE AS CONEXÕES</div>
-          <h1>{level.title}</h1>
-        </div>
-        <div
-          className={`move-counter ${b.moves < 8 ? "low" : ""}`}
-          aria-label={`${b.moves} jogadas restantes${b.moves < 8 ? ", atenção ao limite" : ""}`}
-        >
-          <strong>{b.moves}</strong>
-          <span>
-            jogadas
-            <br />
-            restantes
-          </span>
-        </div>
-      </div>
-      {tutorial && (
-        <details className="mobile-tutorial">
-          <summary>Como jogar esta fase</summary>
-          <p>{tutorial}</p>
-        </details>
+      {drag.drag && (
+        <DragPreview
+          cards={stackFrom(level, b, drag.drag.id).map(card)}
+          x={drag.drag.x}
+          y={drag.drag.y}
+        />
       )}
+      <GameHeading
+        level={level}
+        game={game}
+        tutorial={tutorial}
+        onBack={onBack}
+      />
       <div className="game-layout">
-        <section className="table" aria-label="Mesa de jogo">
+        <section
+          className="table"
+          aria-label="Mesa de jogo"
+          onClickCapture={drag.captureClick}
+        >
           <div className={`selection-guide ${selected ? "has-selection" : ""}`}>
             <p className="game-message" role="status" aria-live="polite">
               {message ||
@@ -136,13 +96,7 @@ export function Board({
                   : "Toque em uma carta e depois no destino.")}
             </p>
             {selected && (
-              <button
-                className="text-button"
-                onClick={() => {
-                  setSelected(null);
-                  setMessage("");
-                }}
-              >
+              <button className="text-button" onClick={cancelSelection}>
                 Cancelar seleção
               </button>
             )}
@@ -167,103 +121,36 @@ export function Board({
             suggestion={suggestion}
             playing={playing}
             move={move}
-            drop={drop}
+            destinationClass={destinationClass}
           />{" "}
           <div className="table-divider">
             <span>SUAS CARTAS</span>
             <span>
-              <MousePointer2 size={12} /> Selecione e escolha o destino
+              <MousePointer2 size={12} /> Toque ou arraste
             </span>
           </div>
           <Columns
             b={b}
             playing={playing}
             move={move}
-            drop={drop}
+            destinationClass={destinationClass}
             renderCard={renderCard}
           />{" "}
-          <div className="stock-area">
-            <div className="stock-pair">
-              <div>
-                <button
-                  className={`stock ${suggestion?.type === "draw" || suggestion?.type === "recycle" ? "hinted" : ""}`}
-                  disabled={!playing || (!b.stock.length && !b.waste.length)}
-                  onClick={() =>
-                    send({ type: b.stock.length ? "draw" : "recycle" })
-                  }
-                  aria-label={
-                    b.stock.length
-                      ? `Comprar carta, ${b.stock.length} no monte`
-                      : "Reciclar descarte"
-                  }
-                >
-                  {b.stock.length ? (
-                    <span className="stock-mark">✧</span>
-                  ) : (
-                    <RotateCcw size={24} />
-                  )}
-                </button>
-                <small>Monte · {b.stock.length}</small>
-              </div>
-              <div className="waste">
-                {b.waste.length ? (
-                  renderCard(b.waste.at(-1)!, true)
-                ) : (
-                  <div className="waste-empty">
-                    <ArrowDown size={20} />
-                  </div>
-                )}
-                <small>Descarte · {b.waste.length}</small>
-              </div>
-            </div>
-            <p>
-              Uma carta por vez.
-              <br />
-              Uma nova possibilidade.
-            </p>
-          </div>
-          <div className="board-toolbar">
-            <button
-              disabled={!playing || game.hintsUsed >= 3}
-              onClick={() => {
-                const a = hint(level, game);
-                if (a && dispatch({ type: "hint" })) {
-                  setSuggestion(a);
-                  setSelected(null);
-                  setMessage(
-                    a.type === "move"
-                      ? `Dica: mova “${card(a.card).text}” para ${a.to.type === "foundation" ? `o espaço de categoria ${a.to.index + 1}` : `a coluna ${a.to.index + 1}`}.`
-                      : a.type === "draw"
-                        ? "Dica: compre uma carta do monte."
-                        : "Dica: recicle o descarte.",
-                  );
-                } else
-                  setMessage(
-                    "Nenhuma dica disponível agora. Tente desfazer ou reiniciar.",
-                  );
-              }}
-            >
-              <Lightbulb size={18} />
-              <span>Dica</span>
-              <b>{3 - game.hintsUsed}</b>
-            </button>
-            <button
-              disabled={
-                !game.history.length ||
-                game.undosUsed >= 3 ||
-                status(level, game) === "won"
-              }
-              onClick={() => send({ type: "undo" })}
-            >
-              <Undo2 size={18} />
-              <span>Desfazer</span>
-              <b>{3 - game.undosUsed}</b>
-            </button>
-            <button onClick={onRestart}>
-              <RotateCcw size={17} />
-              <span>Reiniciar</span>
-            </button>
-          </div>
+          <StockArea
+            game={game}
+            playing={playing}
+            suggestion={suggestion}
+            send={send}
+            renderCard={renderCard}
+          />
+          <BoardToolbar
+            game={game}
+            playing={playing}
+            won={status(level, game) === "won"}
+            onHint={showHint}
+            onUndo={() => send({ type: "undo" })}
+            onRestart={onRestart}
+          />
         </section>
         <BoardAside b={b} level={level} tutorial={tutorial} />
       </div>
