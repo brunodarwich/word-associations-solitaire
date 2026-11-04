@@ -8,6 +8,14 @@ function random(seed: number) {
     return seed / 4294967296;
   };
 }
+function shuffle<T>(items: T[], rng: () => number): T[] {
+  const result = items.slice();
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
+}
 export const levels: Level[] = content.map((data, i) => {
   const id = i + 1,
     rng = random(id * 7919),
@@ -23,25 +31,36 @@ export const levels: Level[] = content.map((data, i) => {
     })),
   ]);
   // Construct a legal collection order with at most three simultaneously open groups.
-  const pending = data.groups.map((_, g) => g),
+  const pending = shuffle(
+      data.groups.map((_, g) => g),
+      rng,
+    ),
     active: number[] = [],
     progress = new Map<number, number>();
+  const words = data.groups.map((_, group) =>
+    shuffle(
+      cards.filter((c) => c.group === group && c.kind === "word"),
+      rng,
+    ),
+  );
   const order: Card[] = [];
   while (pending.length || active.length) {
     if (
       pending.length &&
       active.length < 3 &&
-      (!active.length || rng() < 0.48)
+      (!active.length || rng() < (id <= 5 ? 0.48 : 0.72))
     ) {
       const group = pending.shift()!;
       active.push(group);
       progress.set(group, 0);
       order.push(cards[group * 5]);
     } else {
-      const index = Math.floor(rng() * active.length),
-        group = active[index],
+      const alternatives = active.filter((g) => g !== order.at(-1)?.group);
+      const candidates = alternatives.length ? alternatives : active;
+      const group = candidates[Math.floor(rng() * candidates.length)],
+        index = active.indexOf(group),
         n = progress.get(group)! + 1;
-      order.push(cards[group * 5 + n]);
+      order.push(words[group][n - 1]);
       progress.set(group, n);
       if (n === 4) active.splice(index, 1);
     }
@@ -51,13 +70,20 @@ export const levels: Level[] = content.map((data, i) => {
   capacities.push(cards.length - count * depth);
   const streams: string[][] = capacities.map(() => []),
     sources: number[] = [];
+  const lastGroups = capacities.map(() => -1);
   order.forEach((card) => {
     const available = capacities
       .map((n, j) => (n > 0 ? j : -1))
       .filter((j) => j >= 0);
-    const source = available[Math.floor(rng() * available.length)];
+    // Prefer a different category from the previous card in each source.
+    // Weight by remaining space so the stock is not left as one ordered tail.
+    const mixed = available.filter((j) => lastGroups[j] !== card.group);
+    const candidates = mixed.length ? mixed : available;
+    let ticket = rng() * candidates.reduce((sum, j) => sum + capacities[j], 0);
+    const source = candidates.find((j) => (ticket -= capacities[j]) < 0)!;
     capacities[source]--;
     streams[source].push(card.id);
+    lastGroups[source] = card.group;
     sources.push(source);
   });
   const solution: PlayAction[] = [],

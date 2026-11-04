@@ -208,7 +208,10 @@ export const content: { title: string; groups: [string, string[]][] }[] = [
         ["impressionismo", "cubismo", "surrealismo", "expressionismo"],
       ],
       ["Técnicas de pintura", ["aquarela", "afresco", "têmpera", "encáustica"]],
-      ["Elementos visuais", ["linha", "textura", "forma", "cor"]],
+      [
+        "Princípios da composição",
+        ["equilíbrio", "contraste", "hierarquia", "proporção"],
+      ],
       ["Etapas da cerâmica", ["modelagem", "secagem", "queima", "esmaltação"]],
     ],
   },
@@ -218,7 +221,15 @@ export const content: { title: string; groups: [string, string[]][] }[] = [
       ["Tributos brasileiros", ["IPTU", "IPVA", "ICMS", "ISS"]],
       ["Renda fixa", ["CDB", "LCI", "LCA", "Tesouro Selic"]],
       ["Indicadores econômicos", ["IPCA", "PIB", "Selic", "IGP-M"]],
-      ["Meios de pagamento", ["Pix", "boleto", "cartão", "dinheiro"]],
+      [
+        "Operações de crédito",
+        [
+          "desconto de duplicatas",
+          "capital de giro",
+          "financiamento",
+          "arrendamento mercantil",
+        ],
+      ],
     ],
   },
   {
@@ -228,7 +239,10 @@ export const content: { title: string; groups: [string, string[]][] }[] = [
         "Períodos da História do Brasil",
         ["Colônia", "Império", "Primeira República", "Estado Novo"],
       ],
-      ["Fontes históricas", ["carta", "diário", "fotografia", "depoimento"]],
+      [
+        "Fontes documentais escritas",
+        ["cartulário", "inventário", "manuscrito", "pergaminho"],
+      ],
       ["Civilizações antigas", ["egípcia", "mesopotâmica", "grega", "romana"]],
       ["Ofícios tradicionais", ["ferreiro", "oleiro", "tecelão", "seleiro"]],
     ],
@@ -241,7 +255,10 @@ export const content: { title: string; groups: [string, string[]][] }[] = [
         ["processador", "placa-mãe", "memória RAM", "SSD"],
       ],
       ["Protocolos de rede", ["HTTP", "DNS", "SMTP", "FTP"]],
-      ["Linguagens de programação", ["Python", "JavaScript", "Rust", "Java"]],
+      [
+        "Paradigmas de programação",
+        ["funcional", "imperativo", "declarativo", "orientado a objetos"],
+      ],
       [
         "Práticas de segurança digital",
         ["backup", "criptografia", "autenticação", "atualização"],
@@ -251,7 +268,7 @@ export const content: { title: string; groups: [string, string[]][] }[] = [
   {
     title: "Laboratório",
     groups: [
-      ["Unidades de medida", ["metro", "quilograma", "segundo", "kelvin"]],
+      ["Unidades derivadas do SI", ["pascal", "joule", "watt", "tesla"]],
       ["Partículas subatômicas", ["próton", "nêutron", "elétron", "neutrino"]],
       [
         "Vidrarias de laboratório",
@@ -266,12 +283,12 @@ export const content: { title: string; groups: [string, string[]][] }[] = [
   {
     title: "Da terra à mesa",
     groups: [
-      ["Cereais", ["arroz", "milho", "trigo", "aveia"]],
+      ["Cereais", ["centeio", "cevada", "sorgo", "triticale"]],
+      ["Leguminosas alimentares", ["tremoço", "fava", "guandu", "ervilha"]],
       [
-        "Leguminosas alimentares",
-        ["feijão", "lentilha", "grão-de-bico", "ervilha"],
+        "Raízes comestíveis",
+        ["mandioquinha", "rabanete", "batata-doce", "nabo"],
       ],
-      ["Raízes comestíveis", ["mandioca", "cenoura", "beterraba", "nabo"]],
       [
         "Implementos agrícolas",
         ["arado", "grade", "semeadora", "pulverizador"],
@@ -314,7 +331,10 @@ export const content: { title: string; groups: [string, string[]][] }[] = [
         "Estilos arquitetônicos",
         ["gótico", "barroco", "neoclássico", "modernista"],
       ],
-      ["Elementos estruturais", ["viga", "pilar", "laje", "fundação"]],
+      [
+        "Elementos estruturais",
+        ["verga", "contraverga", "baldrame", "consolo"],
+      ],
       ["Elementos de fachada", ["brise", "marquise", "platibanda", "cobogó"]],
       [
         "Plantas arquitetônicas",
@@ -339,8 +359,8 @@ export const content: { title: string; groups: [string, string[]][] }[] = [
         ["mutualismo", "comensalismo", "parasitismo", "competição"],
       ],
       [
-        "Ciclo da água",
-        ["evaporação", "condensação", "precipitação", "infiltração"],
+        "Processos de dispersão de sementes",
+        ["anemocoria", "zoocoria", "hidrocoria", "autocoria"],
       ],
       [
         "Fontes renováveis de energia",
@@ -369,10 +389,10 @@ export const content: { title: string; groups: [string, string[]][] }[] = [
         ["lombada", "folha de rosto", "sumário", "colofão"],
       ],
       ["Formas poéticas", ["soneto", "haicai", "ode", "elegia"]],
-      ["Gêneros dramáticos", ["tragédia", "comédia", "tragicomédia", "farsa"]],
+      ["Gêneros dramáticos", ["auto", "farsa", "entremês", "tragicomédia"]],
       [
         "Escolas literárias brasileiras",
-        ["arcadismo", "romantismo", "realismo", "parnasianismo"],
+        ["quinhentismo", "barroco", "simbolismo", "parnasianismo"],
       ],
       [
         "Recursos sonoros da poesia",
@@ -398,14 +418,19 @@ export const content: { title: string; groups: [string, string[]][] }[] = [
       ],
       [
         "Ramos da matemática",
-        ["álgebra", "geometria", "aritmética", "combinatória"],
+        [
+          "topologia",
+          "combinatória",
+          "teoria dos números",
+          "análise matemática",
+        ],
       ],
     ],
   },
   {
     title: "Terra e universo",
     groups: [
-      ["Exemplos de rochas", ["granito", "basalto", "mármore", "arenito"]],
+      ["Rochas metamórficas", ["gnaisse", "quartzito", "mármore", "ardósia"]],
       [
         "Camadas internas da Terra",
         ["crosta", "manto", "núcleo externo", "núcleo interno"],
@@ -414,8 +439,8 @@ export const content: { title: string; groups: [string, string[]][] }[] = [
         "Estruturas vulcânicas",
         ["cratera", "chaminé", "cone vulcânico", "câmara magmática"],
       ],
-      ["Objetos astronômicos", ["estrela", "cometa", "asteroide", "galáxia"]],
-      ["Fases principais da Lua", ["nova", "crescente", "cheia", "minguante"]],
+      ["Estruturas de galáxias", ["bojo", "disco", "halo", "braço espiral"]],
+      ["Marcos da órbita", ["periélio", "afélio", "perigeu", "apogeu"]],
     ],
   },
   {
@@ -427,7 +452,7 @@ export const content: { title: string; groups: [string, string[]][] }[] = [
       ],
       [
         "Processos cognitivos",
-        ["atenção", "percepção", "memória", "aprendizagem"],
+        ["metacognição", "abstração", "categorização", "inferência"],
       ],
       [
         "Vieses cognitivos",
@@ -468,18 +493,24 @@ export const content: { title: string; groups: [string, string[]][] }[] = [
         ["exposição", "complicação", "clímax", "desfecho"],
       ],
       [
-        "Gêneros cinematográficos",
-        ["suspense", "faroeste", "documentário", "musical"],
+        "Termos da montagem audiovisual",
+        ["raccord", "corte seco", "fusão", "montagem paralela"],
       ],
     ],
   },
   {
     title: "Grande conexão",
     groups: [
-      ["Termodinâmica", ["calor", "trabalho", "entropia", "energia interna"]],
-      ["Retórica clássica", ["ethos", "pathos", "logos", "kairós"]],
-      ["Cartografia", ["escala", "legenda", "projeção", "coordenadas"]],
-      ["Genética", ["gene", "alelo", "genótipo", "fenótipo"]],
+      [
+        "Também são termos musicais",
+        ["andamento", "compasso", "acorde", "cadência"],
+      ],
+      ["Também são termos de costura", ["ponto", "manga", "viés", "bainha"]],
+      ["Também são termos de navegação", ["vela", "cabo", "leme", "proa"]],
+      [
+        "Também são termos de tipografia",
+        ["corpo", "família", "fonte", "serifa"],
+      ],
       [
         "Patrimônio cultural imaterial brasileiro",
         ["roda de capoeira", "samba de roda", "frevo", "arte kusiwa"],

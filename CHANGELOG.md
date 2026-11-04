@@ -1,5 +1,11 @@
 # Histórico
 
+## Embaralhamento e vocabulário — 2026-11-03
+
+- Categorias e palavras embaralhadas separadamente, com coleta intercalada e distribuição que favorece categorias diferentes entre cartas vizinhas.
+- Vocabulário mais específico a partir da fase 16 e associações por contexto e múltiplos sentidos na fase final.
+- Distribuições reproduzíveis, com solução validada nas 30 fases e testes de variedade e mistura das cartas.
+
 ## Mesa compacta e pilhas — 2026-11-01
 
 - Pilhas expostas da mesma categoria podem ser selecionadas e movidas por uma jogada; desfazer restaura todo o grupo.

@@ -32,7 +32,9 @@ Uma estrela pela vitória, outra por não usar dicas e outra por não desfazer. 
 
 ## Distribuições verificadas
 
-`src/content.ts` contém o vocabulário. `src/levels.ts` constrói distribuições fixas a partir de uma ordem legal de coleta, respeitando três categorias simultâneas. Cada fase inclui uma sequência testemunha; os testes reproduzem todas as sequências pelo motor público e verificam conservação das cartas. Não há alegação de solução ótima. Os limites são calculados sobre a solução testemunha com margem progressiva de 60% a 15%.
+`src/content.ts` contém o vocabulário: categorias cotidianas nas primeiras fases, termos mais específicos nas intermediárias e associações por contexto e múltiplos sentidos no final. Cada grupo tem quatro palavras, sem repetições na mesma fase.
+
+`src/levels.ts` constrói distribuições fixas a partir de uma ordem legal de coleta, respeitando três categorias simultâneas. O embaralhamento Fisher–Yates varia a ordem das categorias e das palavras dentro de cada grupo. A coleta intercala categorias e a distribuição favorece vizinhos de grupos diferentes, ponderando o espaço restante de cada coluna e do monte. A semente fixa permite reiniciar a mesma distribuição e retomar partidas salvas. Cada fase inclui uma sequência testemunha; os testes reproduzem todas as sequências pelo motor público, verificam conservação das cartas e medem a mistura entre categorias. Não há alegação de solução ótima. Os limites são calculados sobre a solução testemunha com margem progressiva de 60% a 15%.
 
 O motor puro fica em `src/engine.ts`. A persistência usa um esquema versionado e valida cartas, categorias, orçamento e histórico antes da retomada. Sons são sintetizados localmente. Fontes são carregadas pelo Google Fonts com alternativas locais.
 
