@@ -1,6 +1,7 @@
 import { Plus } from "lucide-react";
 import type { Board, Destination } from "./types";
 import type { ReactNode } from "react";
+import { useLayoutEffect, useRef } from "react";
 export function Columns({
   b,
   playing,
@@ -14,8 +15,19 @@ export function Columns({
   destinationClass: (to: Destination) => string;
   renderCard: (id: string, column?: number) => ReactNode;
 }) {
+  const viewport = useRef<HTMLDivElement>(null);
+  const alignedPiles = useRef(
+    b.columns.every((pile) => pile.length === b.columns[0].length),
+  );
+  useLayoutEffect(() => {
+    // New deals have equally deep piles: start at their exposed tops.
+    // Run only on mount so moving a card never overrides the player's scroll.
+    if (alignedPiles.current && viewport.current)
+      viewport.current.scrollTop = viewport.current.scrollHeight;
+  }, []);
   return (
     <div
+      ref={viewport}
       className="columns-viewport"
       tabIndex={0}
       aria-label="Colunas de cartas, área rolável"

@@ -74,7 +74,7 @@ describe("pilhas da mesma categoria", () => {
     game.board.columns[0] = [...group];
     game.board.stock = game.board.stock.filter((id) => !group.includes(id));
     game.board.revealed = [...group];
-    game.board.completed = [1, 2];
+    game.board.completed = level.groups.map((_, i) => i).slice(1);
     game.board.stock = [];
     game.board.moves = 1;
     const next = move(game, group[0], { type: "foundation", index: 0 });

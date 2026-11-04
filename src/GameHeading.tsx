@@ -30,7 +30,9 @@ export function GameHeading({
       </div>
       <div className="game-heading">
         <div>
-          <div className="eyebrow">ENCONTRE AS CONEXÕES</div>
+          <div className="eyebrow">
+            {level.cards.length} CARTAS · {level.groups.length} GRUPOS
+          </div>
           <h1>{level.title}</h1>
         </div>
         <div

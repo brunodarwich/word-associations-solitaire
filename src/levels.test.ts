@@ -2,6 +2,26 @@ import { describe, expect, it } from "vitest";
 import { levels } from "./levels";
 
 describe("embaralhamento da campanha", () => {
+  it("aumenta cartas, grupos e profundidade ao longo dos capítulos", () => {
+    const groups = [5, 7, 8, 9, 10, 12];
+    const depths = [4, 6, 7, 8, 9, 10];
+    for (const level of levels) {
+      const chapter = Math.floor((level.id - 1) / 5);
+      expect(level.groups).toHaveLength(groups[chapter]);
+      expect(level.cards).toHaveLength(groups[chapter] * 5);
+      expect(
+        level.initial.columns.every((p) => p.length === depths[chapter]),
+      ).toBe(true);
+      expect(level.initial.revealed).toHaveLength(level.initial.columns.length);
+      expect(level.initial.stock.length).toBeGreaterThanOrEqual(5);
+    }
+    expect(levels[6].cards).toHaveLength(35);
+    expect(levels[6].groups).toHaveLength(7);
+    expect(levels[6].initial.columns.map((p) => p.length)).toEqual([
+      6, 6, 6, 6, 6,
+    ]);
+  });
+
   it("varia a ordem das categorias e das palavras, sem seguir o cadastro", () => {
     let reorderedGroups = 0;
     let reorderedWords = 0;

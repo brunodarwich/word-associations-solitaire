@@ -1,5 +1,13 @@
 # Histórico
 
+## Mesas ampliadas — 2026-11-03
+
+- Campanha com 5 a 12 grupos e 25 a 60 cartas por fase, em pilhas iniciais de 4 a 10 cartas.
+- Fase 7 ampliada para 7 grupos, 35 cartas e cinco pilhas de 6 cartas, além do monte com 5 cartas.
+- Grupos adicionais de temas relacionados, sem palavras ou categorias repetidas na mesma mesa.
+- Migração automática de partidas antigas: mantém estrelas, fases liberadas e preferências e reinicia apenas a mesa em andamento.
+- Quantidade de cartas e grupos visível na seleção de fases e no cabeçalho da mesa.
+
 ## Embaralhamento e vocabulário — 2026-11-03
 
 - Categorias e palavras embaralhadas separadamente, com coleta intercalada e distribuição que favorece categorias diferentes entre cartas vizinhas.

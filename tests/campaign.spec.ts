@@ -3,6 +3,85 @@ import AxeBuilder from "@axe-core/playwright";
 import { levels } from "../src/levels";
 import { createGame } from "../src/engine";
 import { defaultSave, STORAGE_KEY } from "../src/storage";
+import legacySave from "../src/legacy-save.fixture.json" with { type: "json" };
+
+test("mesas profundas abrem com os topos jogáveis visíveis no celular", async ({
+  page,
+}) => {
+  for (const width of [320, 360]) {
+    await page.setViewportSize({ width, height: width === 320 ? 640 : 800 });
+    for (const level of [levels[6], levels[29]]) {
+      await page.goto("./");
+      await page.evaluate(
+        ({ key, save }) => localStorage.setItem(key, JSON.stringify(save)),
+        {
+          key: STORAGE_KEY,
+          save: {
+            ...defaultSave(),
+            unlocked: level.id,
+            game: createGame(level),
+          },
+        },
+      );
+      await page.reload();
+      await page.getByRole("button", { name: "Continuar partida" }).click();
+      await expect
+        .poll(() =>
+          page.locator(".columns-viewport").evaluate((viewport) => {
+            const box = viewport.getBoundingClientRect();
+            return Array.from(
+              viewport.querySelectorAll("button[data-card]"),
+            ).every((card) => {
+              const r = card.getBoundingClientRect();
+              return r.top >= box.top - 1 && r.bottom <= box.bottom + 1;
+            });
+          }),
+        )
+        .toBe(true);
+    }
+  }
+});
+
+test("a fase 7 salva ganha 35 cartas sem perder estrelas ou fases liberadas", async ({
+  page,
+}, info) => {
+  await page.goto("./");
+  await page.evaluate(
+    ({ key, save }) => localStorage.setItem(key, JSON.stringify(save)),
+    { key: STORAGE_KEY, save: legacySave },
+  );
+  await page.reload();
+  await expect(
+    page.getByText(/Preservamos suas estrelas e fases liberadas/),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Continuar partida" }).click();
+  await expect(
+    page.getByRole("heading", { name: levels[6].title, exact: true }),
+  ).toBeVisible();
+  await expect(page.locator(".column .card-wrap")).toHaveCount(30);
+  await expect(page.locator(".column .card-back")).toHaveCount(25);
+  await page.getByRole("button", { name: /Dica/ }).click();
+  const saved = await page.evaluate(
+    (key) => JSON.parse(localStorage.getItem(key)!),
+    STORAGE_KEY,
+  );
+  expect(saved.version).toBe(2);
+  expect(saved.unlocked).toBe(7);
+  expect(saved.stars).toEqual(legacySave.stars);
+  expect(saved.prefs).toEqual(legacySave.prefs);
+  expect(saved.game.board.stock).toHaveLength(5);
+  await page.screenshot({
+    path: `screenshots/expanded-phase7-${info.project.name}.png`,
+    fullPage: true,
+  });
+  await page.reload();
+  await page.getByRole("button", { name: "Continuar partida" }).click();
+  const resumed = await page.evaluate(
+    (key) => JSON.parse(localStorage.getItem(key)!),
+    STORAGE_KEY,
+  );
+  expect(resumed).toEqual(saved);
+});
 
 test("a campanha inteira pode ser concluída pelos controles da interface", async ({
   page,
@@ -115,12 +194,20 @@ test("títulos longos permanecem inteiros dentro das cartas", async ({
     level = levels[29];
   save.unlocked = 30;
   save.game = createGame(level);
-  save.game.board.columns = level.groups.map((_, group) =>
+  // Expose the longest labels using the actual number of playable columns.
+  const groups = level.groups
+    .map((name, group) => ({ name, group }))
+    .sort((a, b) => b.name.length - a.name.length)
+    .slice(0, level.initial.columns.length);
+  save.game.board.columns = groups.map(({ group }) =>
     level.cards
       .filter((c) => c.group === group)
       .map((c) => c.id)
       .reverse(),
   );
+  save.game.board.stock = level.cards
+    .map((c) => c.id)
+    .filter((id) => !save.game!.board.columns.flat().includes(id));
   save.game.board.revealed = save.game.board.columns.map((p) => p.at(-1)!);
   await page.evaluate(
     ({ key, save }) => localStorage.setItem(key, JSON.stringify(save)),

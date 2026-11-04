@@ -1,15 +1,16 @@
-import { levels } from "./levels";
+import { levels, legacyLevels } from "./levels";
+import { createGame } from "./engine";
 import type { Board, Game } from "./types";
 export const STORAGE_KEY = "paciencia-palavras-v1";
 export type Save = {
-  version: 1;
+  version: 2;
   unlocked: number;
   stars: Record<number, number>;
   game: Game | null;
   prefs: { sound: boolean; reducedMotion: boolean };
 };
 export const defaultSave = (): Save => ({
-  version: 1,
+  version: 2,
   unlocked: 1,
   stars: {},
   game: null,
@@ -17,8 +18,8 @@ export const defaultSave = (): Save => ({
 });
 const integer = (x: unknown, min: number, max: number) =>
   typeof x === "number" && Number.isInteger(x) && x >= min && x <= max;
-function validBoard(b: Board, levelId: number) {
-  const l = levels[levelId - 1];
+function validBoard(b: Board, levelId: number, version: number) {
+  const l = (version === 1 ? legacyLevels : levels)[levelId - 1];
   if (
     !b ||
     !Array.isArray(b.columns) ||
@@ -81,10 +82,10 @@ function validBoard(b: Board, levelId: number) {
 }
 export function decode(raw: string): Save | null {
   try {
-    const s = JSON.parse(raw) as Save;
+    const s = JSON.parse(raw) as Omit<Save, "version"> & { version: number };
     if (
       !s ||
-      s.version !== 1 ||
+      (s.version !== 1 && s.version !== 2) ||
       !integer(s.unlocked, 1, 30) ||
       !s.stars ||
       typeof s.stars !== "object" ||
@@ -110,12 +111,19 @@ export function decode(raw: string): Save | null {
         !integer(g.undosUsed, 0, 3) ||
         !Array.isArray(g.history) ||
         g.history.length > 3 ||
-        !validBoard(g.board, g.levelId) ||
-        g.history.some((b) => !validBoard(b, g.levelId))
+        !validBoard(g.board, g.levelId, s.version) ||
+        g.history.some((b) => !validBoard(b, g.levelId, s.version))
       )
         return null;
     }
-    return s;
+    return {
+      ...s,
+      version: 2,
+      game:
+        s.version === 1 && s.game
+          ? createGame(levels[s.game.levelId - 1])
+          : s.game,
+    };
   } catch {
     return null;
   }
@@ -126,7 +134,13 @@ export function loadSave(): { save: Save; warning: string } {
     if (!raw) return { save: defaultSave(), warning: "" };
     const save = decode(raw);
     return save
-      ? { save, warning: "" }
+      ? {
+          save,
+          warning:
+            JSON.parse(raw).version === 1 && save.game
+              ? "A campanha ganhou mais cartas e grupos. Preservamos suas estrelas e fases liberadas e reiniciamos a mesa da fase atual."
+              : "",
+        }
       : {
           save: defaultSave(),
           warning:

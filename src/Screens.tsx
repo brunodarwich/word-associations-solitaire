@@ -196,6 +196,9 @@ export function Campaign({
                   )}
                 </span>
                 <strong>{l.title}</strong>
+                <span className="muted">
+                  {l.cards.length} cartas · {l.groups.length} grupos
+                </span>
                 <StarRow count={save.stars[l.id]} />
                 {l.id === save.unlocked && (
                   <small>

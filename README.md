@@ -32,11 +32,26 @@ Uma estrela pela vitória, outra por não usar dicas e outra por não desfazer. 
 
 ## Distribuições verificadas
 
+As mesas crescem a cada capítulo. As contagens incluem as cartas de categoria.
+
+| Fases | Grupos | Cartas | Cartas por pilha inicial |
+| ----- | ------ | ------ | ------------------------ |
+| 1–5   | 5      | 25     | 4                        |
+| 6–10  | 7      | 35     | 6                        |
+| 11–15 | 8      | 40     | 7                        |
+| 16–20 | 9      | 45     | 8                        |
+| 21–25 | 10     | 50     | 9                        |
+| 26–30 | 12     | 60     | 10                       |
+
+Cada pilha começa com apenas o topo exposto. O monte mantém entre 5 e 10 cartas. `src/campaign.ts` combina grupos de temas relacionados do vocabulário, evitando palavras e categorias repetidas na mesma mesa.
+
 `src/content.ts` contém o vocabulário: categorias cotidianas nas primeiras fases, termos mais específicos nas intermediárias e associações por contexto e múltiplos sentidos no final. Cada grupo tem quatro palavras, sem repetições na mesma fase.
 
 `src/levels.ts` constrói distribuições fixas a partir de uma ordem legal de coleta, respeitando três categorias simultâneas. O embaralhamento Fisher–Yates varia a ordem das categorias e das palavras dentro de cada grupo. A coleta intercala categorias e a distribuição favorece vizinhos de grupos diferentes, ponderando o espaço restante de cada coluna e do monte. A semente fixa permite reiniciar a mesma distribuição e retomar partidas salvas. Cada fase inclui uma sequência testemunha; os testes reproduzem todas as sequências pelo motor público, verificam conservação das cartas e medem a mistura entre categorias. Não há alegação de solução ótima. Os limites são calculados sobre a solução testemunha com margem progressiva de 60% a 15%.
 
 O motor puro fica em `src/engine.ts`. A persistência usa um esquema versionado e valida cartas, categorias, orçamento e histórico antes da retomada. Sons são sintetizados localmente. Fontes são carregadas pelo Google Fonts com alternativas locais.
+
+Os saves da versão 1 são validados contra a campanha anterior e migrados para a versão 2. A fase em andamento começa na nova mesa ampliada; estrelas, fases liberadas e preferências são preservadas. A chave de armazenamento continua a mesma para permitir essa atualização automática.
 
 ## Publicação
 
